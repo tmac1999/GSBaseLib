@@ -98,7 +98,6 @@ public class WebResourceListDialog extends Dialog {
                     public void onClick(View v) {
                         //下载 并替换资源
                         String url = avObject.get("url").toString();
-                        url = "http://10.39.2.203:8080/mock/aixuexiapp/res/mock.zip";
                         AVFile file = new AVFile("aaa.zip", url, null);
                         file.getDataInBackground(new GetDataCallback() {
                             @Override
