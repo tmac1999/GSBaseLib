@@ -3,8 +3,6 @@ package base.app.com.gaosi.gsbaselib.net.callback;
 import android.os.Environment;
 import android.text.TextUtils;
 
-import com.gaosi.application.Constants;
-import com.gaosi.util.LogUtil;
 import com.lzy.okgo.callback.FileCallback;
 import com.lzy.okgo.convert.FileConvert;
 import com.lzy.okgo.model.Progress;
@@ -12,6 +10,8 @@ import com.lzy.okgo.model.Response;
 import com.lzy.okgo.request.base.Request;
 
 import java.io.File;
+
+import base.app.com.gaosi.gsbaselib.utils.log.networklog.LogUtil;
 
 import static com.lzy.okgo.convert.FileConvert.DM_TARGET_FOLDER;
 
@@ -41,7 +41,7 @@ public abstract class FileDownloadCallback extends FileCallback {
         super.onStart(request);
         //添加请求头部
         request.headers("User-Agent", "WeAppPlusPlayground/1.0")
-                .headers("appId", "" + Constants.appId)
+                .headers("appId", "" + GSRequest.Constants.appId)
                 .headers("X-Requested-With","X-Requested-With")
                 .headers("Content-Type", "application/json;charset=UTF-8");
     }

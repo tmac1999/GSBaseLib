@@ -2,7 +2,8 @@ package base.app.com.gaosi.gsbaselib.utils.log.networklog;
 
 import android.util.Log;
 
-import com.gaosi.application.Constants;
+
+import base.app.com.gaosi.gsbaselib.net.callback.GSRequest;
 
 
 /**
@@ -12,31 +13,31 @@ import com.gaosi.application.Constants;
 
 public class LogUtil {
     public static void v(String msg) {
-        if (Constants.IsDebug) {
+        if (GSRequest.Constants.IsDebug) {
             Log.v("LogUtil", "LogUtil msg:" + msg);
         }
     }
 
     public static void d(String msg) {
-        if (Constants.IsDebug) {
+        if (GSRequest.Constants.IsDebug) {
             Log.d("LogUtil", "LogUtil msg:" + msg);
         }
     }
 
     public static void i(String msg) {
-        if (Constants.IsDebug) {
+        if (GSRequest.Constants.IsDebug) {
             Log.i("LogUtil", "LogUtil msg:" + msg);
         }
     }
 
     public static void w(String msg) {
-        if (Constants.IsDebug) {
+        if (GSRequest.Constants.IsDebug) {
             Log.w("LogUtil", "LogUtil msg:" + msg);
         }
     }
 
     public static void e(String msg) {
-        if (Constants.IsDebug) {
+        if (GSRequest.Constants.IsDebug) {
             Log.e("LogUtil", "LogUtil msg:" + msg);
         }
     }

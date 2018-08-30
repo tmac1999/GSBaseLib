@@ -36,4 +36,5 @@ dependencies {
     compile files('libs/aliyun-log.jar')
     compile files('libs/fastjson-1.2.35.jar')
     provided 'com.lzy.net:okgo:3.0.4'
+    provided 'com.google.code.gson:gson:2.2.4'
 }

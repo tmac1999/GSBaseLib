@@ -16,11 +16,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.avos.avoscloud.AVException;
-import com.avos.avoscloud.AVFile;
-import com.avos.avoscloud.AVObject;
-import com.avos.avoscloud.GetDataCallback;
-import com.avos.avoscloud.ProgressCallback;
+import com.lzy.okgo.model.Response;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -28,13 +24,14 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.util.Date;
 import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
 import base.app.com.gaosi.gsbaselib.R;
+import base.app.com.gaosi.gsbaselib.net.callback.FileDownloadCallback;
+import base.app.com.gaosi.gsbaselib.request.Request;
 
 /**
  * Created by mrz on 18/8/23.
@@ -52,7 +49,7 @@ public class WebResourceListDialog extends Dialog {
 
     Context c;
 
-    private void init(final Context c, final List<AVObject> list) {
+    private void init(final Context c, final List<H5ResourceBean> list) {
 
         setContentView(R.layout.gsbaselib_dialog_web_resource_list);
         this.c = c;
@@ -87,32 +84,82 @@ public class WebResourceListDialog extends Dialog {
                 TextView tv_name = view.findViewById(R.id.tv_name);
                 final ProgressBar progressBar = findViewById(R.id.pb);
                 TextView tv_upload_time = view.findViewById(R.id.tv_upload_time);
-                final AVObject avObject = list.get(position);
-                Date date = (Date) avObject.get("updatedAt");
-                String updatedAt = date.toLocaleString();
-                tv_upload_time.setText(updatedAt);
-                final String name = avObject.get("name").toString();
+                final H5ResourceBean avObject = list.get(position);
+                String time = new Date(Long.valueOf(avObject.updatedAt)).toLocaleString();
+                tv_upload_time.setText(time);
+                final String name = avObject.name;
                 tv_name.setText(name);
                 view.findViewById(R.id.btn_replace).setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         //下载 并替换资源
-                        String url = avObject.get("url").toString();
-                        AVFile file = new AVFile("aaa.zip", url, null);
-                        file.getDataInBackground(new GetDataCallback() {
+                        String url = avObject.url;
+                        final String path = Environment.getExternalStorageDirectory() + "/" + name;
+//                        Request.getH5ResourceZipFile(url, new GetDataCallback() {
+//                            @Override
+//                            public void done(final byte[] bytes, AVException e) {
+//                                new Thread() {
+//                                    @Override
+//                                    public void run() {
+//                                        File zipFile = new File(path);
+//
+//                                        OutputStream output = null;
+//                                        try {
+//                                            output = new FileOutputStream(zipFile);
+//                                            BufferedOutputStream bufferedOutput = new BufferedOutputStream(output);
+//                                            bufferedOutput.write(bytes);
+//                                            unzip(zipFile.toString(), WebResourceUploader.filePath);
+//                                        } catch (FileNotFoundException e1) {
+//                                            e1.printStackTrace();
+//                                        } catch (IOException e1) {
+//                                            e1.printStackTrace();
+//                                        }
+//
+//                                        progressBar.post(new Runnable() {
+//                                            @Override
+//                                            public void run() {
+//                                                tvCopyProgress.setText("替换完成");
+//                                                progressBar.setVisibility(View.GONE);
+//                                            }
+//                                        });
+//                                    }
+//                                }.start();
+//
+//                            }
+//
+//                        }, new ProgressCallback() {
+//                            @Override
+//                            public void done(Integer integer) {
+//                                // 下载进度数据，integer 介于 0 和 100。
+//
+//
+//                                progressBar.setMax(100);
+//                                progressBar.setProgress(integer);
+//                                progressBar.setVisibility(View.VISIBLE);
+//
+//
+//                            }
+//                        });
+
+
+                        Request.getH5ResourceZipFile(url, name, new FileDownloadCallback() {
                             @Override
-                            public void done(final byte[] bytes, AVException e) {
+                            public void onDownloadProcess(float process) {
+                                progressBar.setMax(100);
+                                int integer = (int) (process * 100);
+                                progressBar.setProgress(integer);
+                                progressBar.setVisibility(View.VISIBLE);
+                            }
+
+                            @Override
+                            public void onResponseSuccess(Response<File> response, int code, final File file) {
                                 new Thread() {
                                     @Override
                                     public void run() {
-                                        File zipFile = new File(Environment.getExternalStorageDirectory() + "/" + name);
 
-                                        OutputStream output = null;
+
                                         try {
-                                            output = new FileOutputStream(zipFile);
-                                            BufferedOutputStream bufferedOutput = new BufferedOutputStream(output);
-                                            bufferedOutput.write(bytes);
-                                            unzip(zipFile.toString(), WebResourceUploader.filePath);
+                                            unzip(file.toString(), WebResourceUploader.filePath);
                                         } catch (FileNotFoundException e1) {
                                             e1.printStackTrace();
                                         } catch (IOException e1) {
@@ -128,19 +175,10 @@ public class WebResourceListDialog extends Dialog {
                                         });
                                     }
                                 }.start();
-
                             }
 
-                        }, new ProgressCallback() {
                             @Override
-                            public void done(Integer integer) {
-                                // 下载进度数据，integer 介于 0 和 100。
-
-
-                                progressBar.setMax(100);
-                                progressBar.setProgress(integer);
-                                progressBar.setVisibility(View.VISIBLE);
-
+                            public void onResponseError(Response<File> response, int code, String message) {
 
                             }
                         });
@@ -152,7 +190,7 @@ public class WebResourceListDialog extends Dialog {
 
     }
 
-    public WebResourceListDialog(@NonNull Context context, int themeResId, List<AVObject> list) {
+    public WebResourceListDialog(@NonNull Context context, int themeResId, List<H5ResourceBean> list) {
         super(context, themeResId);
         if (list != null && list.size() != 0)
             init(context, list);

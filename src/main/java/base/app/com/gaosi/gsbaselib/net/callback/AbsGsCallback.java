@@ -1,6 +1,5 @@
 package base.app.com.gaosi.gsbaselib.net.callback;
 
-import com.gaosi.application.Constants;
 import com.lzy.okgo.callback.AbsCallback;
 import com.lzy.okgo.model.Response;
 import com.lzy.okgo.request.base.Request;
@@ -27,17 +26,17 @@ public abstract class AbsGsCallback<E> extends AbsCallback<String> {
         super.onStart(request);
         //添加请求头部
         Request headers = request.headers("User-Agent", "WeAppPlusPlayground/1.0")
-                .headers("appId", "" + Constants.appId)
+                .headers("appId", "" + GSRequest.Constants.appId)
                 .headers("X-Requested-With", "X-Requested-With")
                 .headers("Content-Type", "application/json;charset=UTF-8")
-                .headers("appVersion", Constants.appVersion)
-                .headers("systemType", Constants.systemType)
-                .headers("systemVersion", "" + Constants.systemVersion)
-                .headers("deviceId", Constants.deviceId)
-                .headers("deviceType", Constants.deviceType)
-                .headers("channel", Constants.channel);
-        if (Constants.teacherInfo != null && Constants.teacherInfo.getTokenAndSessionId() != null) {
-            headers.headers("token", Constants.teacherInfo.getTokenAndSessionId());
+                .headers("appVersion", GSRequest.Constants.appVersion)
+                .headers("systemType", GSRequest.Constants.systemType)
+                .headers("systemVersion", "" + GSRequest.Constants.systemVersion)
+                .headers("deviceId", GSRequest.Constants.deviceId)
+                .headers("deviceType", GSRequest.Constants.deviceType)
+                .headers("channel", GSRequest.Constants.channel);
+        if (GSRequest.Constants != null && GSRequest.Constants.tokenAndSessionId != null) {
+            headers.headers("token", GSRequest.Constants.tokenAndSessionId);
             //headers.headers("token", "1bebb9c4c2355f0330a76dbaae25313b,742,0");
         }
 

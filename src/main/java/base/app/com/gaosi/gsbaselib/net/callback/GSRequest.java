@@ -17,7 +17,9 @@ import java.util.concurrent.TimeUnit;
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.SSLSession;
 
+import base.app.com.gaosi.gsbaselib.bean.ConstantBean;
 import base.app.com.gaosi.gsbaselib.net.IService;
+import base.app.com.gaosi.gsbaselib.utils.log.networklog.GSHttpLoggingInterceptor;
 import okhttp3.OkHttpClient;
 
 /**
@@ -39,12 +41,18 @@ public class GSRequest {
 
         return method;
     }
+
     /**
      * 初始化OkGO，添加HTTPS支持
      *
      * @param application 当前用用的Application
      */
-    public static void initRequest(Application application) {
+    public static ConstantBean Constants = new ConstantBean();//fixme 待主动赋值
+    public static Application application ;
+
+    public static void initRequest(Application application, boolean isDebug, ConstantBean constant) {
+        GSRequest.Constants = constant;
+        GSRequest.application = application;
         OkHttpClient.Builder builder = new OkHttpClient.Builder();
         HttpsUtils.SSLParams sslParams = HttpsUtils.getSslSocketFactory();
         builder.sslSocketFactory(sslParams.sSLSocketFactory, sslParams.trustManager);
@@ -52,7 +60,7 @@ public class GSRequest {
         builder.readTimeout(TIME_OUT_COUNT, TimeUnit.MILLISECONDS);
         builder.writeTimeout(TIME_OUT_COUNT, TimeUnit.MILLISECONDS);
         builder.connectTimeout(TIME_OUT_COUNT, TimeUnit.MILLISECONDS);
-        if (BuildConfig.DEBUG) {
+        if (isDebug) {
             GSHttpLoggingInterceptor loggingInterceptor = new GSHttpLoggingInterceptor("Work");
             loggingInterceptor.setPrintLevel(GSHttpLoggingInterceptor.Level.BODY);
             builder.addInterceptor(loggingInterceptor);
@@ -70,6 +78,7 @@ public class GSRequest {
     public static void startRequest(String url, Map<String, String> params, AbsGsCallback callback) {
         startRequest(url, POST, params, callback);
     }
+
     /**
      * 发送网络请求
      *
@@ -78,14 +87,15 @@ public class GSRequest {
      * @param callback 请求参数返回值
      */
     public static void startRequest(IService url, Map<String, String> params, GSBusinessRequest callback) {
-        callback.service=url;
-        callback.requestParams=params;
+        callback.service = url;
+        callback.requestParams = params;
         startRequest(url.getUrl(), POST, params, callback);
     }
 
     public static void startRequest(String url, int method, Map<String, String> params, AbsGsCallback callback) {
         startRequest(url, method, params, "", callback);
     }
+
     public static void startRequest(String url, int method, Map<String, String> params, String tag, AbsGsCallback callback) {
         if (TextUtils.isEmpty(url)) {
             return;
@@ -116,7 +126,7 @@ public class GSRequest {
         }
     }
 
-    public static void startRequest(String url, int method, Map<String, String> params,boolean isUpJson ,AbsGsCallback callback) {
+    public static void startRequest(String url, int method, Map<String, String> params, boolean isUpJson, AbsGsCallback callback) {
         if (TextUtils.isEmpty(url)) {
             return;
         }
@@ -141,9 +151,9 @@ public class GSRequest {
 
         if (method == GET) {
             OkGo.get(url).tag(tag).params(requestParam).execute(callback);
-        } else if(isUpJson){
+        } else if (isUpJson) {
             OkGo.post(url).tag(tag).upJson(new JSONObject(requestParam)).execute(callback);
-        } else{
+        } else {
             OkGo.post(url).tag(tag).params(requestParam).execute(callback);
         }
     }

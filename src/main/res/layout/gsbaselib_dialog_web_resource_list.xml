@@ -28,6 +28,7 @@
 
     <ListView
         android:id="@+id/lv_web_resource_list"
+        android:layout_marginBottom="10dp"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 

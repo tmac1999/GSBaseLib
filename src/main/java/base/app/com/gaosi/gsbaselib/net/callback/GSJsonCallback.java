@@ -1,13 +1,16 @@
 package base.app.com.gaosi.gsbaselib.net.callback;
 
 import android.support.annotation.NonNull;
+import android.widget.Toast;
 
+import com.google.gson.Gson;
 import com.lzy.okgo.model.Response;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 
 import base.app.com.gaosi.gsbaselib.net.GSHttpResponse;
+import base.app.com.gaosi.gsbaselib.webresource_uploader.H5ResourceBean;
 
 /**
  * Created by pingfu on 2018/3/2.
@@ -37,7 +40,8 @@ public abstract class GSJsonCallback<E> extends AbsGsCallback<GSHttpResponse<E>>
                 result.body = gson.fromJson(body, getBodyType());
 
                 if (result.body == null) {
-                    result.body = getBodyInstance();
+                    //result.body = getBodyInstance();
+                    result.body = (E) new H5ResourceBean();
                 }
             }
         } catch (Exception e) {
@@ -46,7 +50,7 @@ public abstract class GSJsonCallback<E> extends AbsGsCallback<GSHttpResponse<E>>
     }
 
     private void onGSError(String errorMessage) {
-        ToastUtil.show(WeexApplication.getApplication(), errorMessage);
+        Toast.makeText(GSRequest.application, errorMessage, Toast.LENGTH_SHORT).show();
     }
 
     @Override
@@ -92,12 +96,12 @@ public abstract class GSJsonCallback<E> extends AbsGsCallback<GSHttpResponse<E>>
         onSuccess(result.body);
     }
 
-    protected void onSuccess(@NonNull E body) {
+    public void onSuccess(@NonNull E body) {
 
     }
 
     @Override
     public void onResponseError(Response response, int code, String message) {
-        ToastUtil.show(WeexApplication.getApplication(), message);
+        Toast.makeText(GSRequest.application, message, Toast.LENGTH_SHORT).show();
     }
 }
