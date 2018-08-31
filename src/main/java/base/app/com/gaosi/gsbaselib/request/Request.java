@@ -24,7 +24,7 @@ import base.app.com.gaosi.gsbaselib.webresource_uploader.H5ResourceBean;
  */
 
 public class Request {
-    public static String GET_H5_RESOURCE_LIST = "http://10.39.2.203:8080/mock/getFiles";
+    public static String GET_H5_RESOURCE_LIST = "http://10.10.1.93/mockserver/getFiles";
 
     public static void getH5ResourceList(GSJsonCallback<List<H5ResourceBean>> callback, String appType) {
         Map<String, String> param = new HashMap<>();
