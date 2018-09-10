@@ -50,7 +50,7 @@ public class GSRequest {
     public static ConstantBean Constants = new ConstantBean();//fixme 待主动赋值
     public static Application application ;
 
-    public static void initRequest(Application application, boolean isDebug, ConstantBean constant) {
+    public static void initRequest(Application application, ConstantBean constant) {
         GSRequest.Constants = constant;
         GSRequest.application = application;
         OkHttpClient.Builder builder = new OkHttpClient.Builder();
@@ -60,7 +60,7 @@ public class GSRequest {
         builder.readTimeout(TIME_OUT_COUNT, TimeUnit.MILLISECONDS);
         builder.writeTimeout(TIME_OUT_COUNT, TimeUnit.MILLISECONDS);
         builder.connectTimeout(TIME_OUT_COUNT, TimeUnit.MILLISECONDS);
-        if (isDebug) {
+        if (Constants.IsDebug) {
             GSHttpLoggingInterceptor loggingInterceptor = new GSHttpLoggingInterceptor("Work");
             loggingInterceptor.setPrintLevel(GSHttpLoggingInterceptor.Level.BODY);
             builder.addInterceptor(loggingInterceptor);

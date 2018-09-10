@@ -59,6 +59,16 @@ public class ConstantBean {
 
     public static float scaledDensity;
     public String tokenAndSessionId;
+
+    public boolean isDebug() {
+        return IsDebug;
+    }
+
+    public ConstantBean setDebug(boolean debug) {
+        IsDebug = debug;
+        return this;
+    }
+
     public boolean IsDebug;
 
     private static String initDeviceId() {
