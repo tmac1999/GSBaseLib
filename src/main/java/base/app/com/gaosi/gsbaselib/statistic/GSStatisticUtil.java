@@ -64,11 +64,13 @@ public class GSStatisticUtil {
 
     static Pools.SimplePool<GSLog> mLogPool = new Pools.SimplePool<>(GSCollectLogUtil.MAX_LOG / 2 + 1);
 
-    public static void initLog(Application application, StatisticInfoBean statisticInfoBean) {
+    public static void initLog(Application application, StatisticInfoBean statisticInfoBean,String accessKeyId,String secretKeyId) {
         SLSDatabaseManager.getInstance().setupDB(application);
         postOldLogs();
         GSStatisticUtil.statisticInfoBean = statisticInfoBean;
         GSStatisticUtil.application = application;
+        GSLogClientFactory.accessKeyId = accessKeyId;
+        GSLogClientFactory.secretKeyId = secretKeyId;
     }
 
     static StatisticInfoBean statisticInfoBean;

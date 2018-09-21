@@ -9,7 +9,7 @@ public class GSLogClientFactory {
     private static GSLogClient mClickLogClient;
     private static GSLogClient mPerformanceClient;
 
-    public static GSLogClient buildLogClient(String storeName) {
+    static GSLogClient buildLogClient(String storeName) {
         if (TextUtils.isEmpty(storeName)) {
             return createPageLogClient();
         }
@@ -62,8 +62,11 @@ public class GSLogClientFactory {
         return mClickLogClient;
     }
 
+    static String accessKeyId = "";
+    static String secretKeyId = "";
+
     private static GSLogClient createGSLogClient(String projectName, String storeName) {
-        GSLogClient client = new GSLogClient();
+        GSLogClient client = new GSLogClient(accessKeyId, secretKeyId);
         client.setProjectName(projectName);
         client.setLogStoreName(storeName);
 

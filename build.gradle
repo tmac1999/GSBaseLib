@@ -26,7 +26,7 @@ android {
 
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
-    compile 'com.android.support:appcompat-v7:26.1.0'
+    compile "com.android.support:appcompat-v7:$rootProject.supportLibraryVersion"
     testCompile 'junit:junit:4.12'
     androidTestCompile('com.android.support.test.espresso:espresso-core:3.0.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
@@ -34,7 +34,7 @@ dependencies {
     // LeanCloud 基础包
     compile files('libs/avoscloud-sdk-v4.6.4.jar')
     compile files('libs/aliyun-log.jar')
-    compile files('libs/fastjson-1.2.35.jar')
     provided 'com.lzy.net:okgo:3.0.4'
     provided 'com.google.code.gson:gson:2.2.4'
+    provided 'com.alibaba:fastjson:1.2.35'
 }

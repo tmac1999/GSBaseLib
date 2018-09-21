@@ -37,7 +37,7 @@ public class WebResourceUploader {
      * @param appid    如果要使用LeadCloud ，传入的leadcloud appid  待移除
      * @param AppKey   如果要使用LeadCloud ，传入的leadcloud appkey 待移除
      *                 <p>
-     *                 <p>(1)init之前需先调用{@link base.app.com.gaosi.gsbaselib.net.callback.GSRequest#initRequest(Application, boolean, ConstantBean)}
+     *                 <p>(1)init之前需先调用{@link base.app.com.gaosi.gsbaselib.net.callback.GSRequest#initRequest(Application, ConstantBean)}
      *                 <p>(2)然后在合适的地方调用{@link WebResourceUploader#setLongClickTriggerView(View, Activity)}</p>
      */
     public static void init(Context c, boolean isDebug, String filePath, String appid, String AppKey) {

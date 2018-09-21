@@ -179,7 +179,7 @@ public class WebResourceListDialog extends Dialog {
 
                             @Override
                             public void onResponseError(Response<File> response, int code, String message) {
-
+                                Toast.makeText(c, message + ":" + response.getException().getCause(), Toast.LENGTH_LONG).show();
                             }
                         });
                     }
