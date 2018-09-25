@@ -119,10 +119,11 @@ class GSCollectLogUtil {
                 }
             }
         }
+        GSLog[] logs = new GSLog[5];
 
-        GSLogClientFactory.buildLogClient(GSLog.PAGE_LOG_STORE).sendLog((GSLog[])pageLogs.toArray());
-        GSLogClientFactory.buildLogClient(GSLog.CLICK_LOG_STORE).sendLog((GSLog[])clickLogs.toArray());
-        GSLogClientFactory.buildLogClient(GSLog.PERFORMANCE_LOG_STORE).sendLog((GSLog[])performanceLogs.toArray());
+        GSLogClientFactory.buildLogClient(GSLog.PAGE_LOG_STORE).sendLog(pageLogs.toArray(logs));
+        GSLogClientFactory.buildLogClient(GSLog.CLICK_LOG_STORE).sendLog(clickLogs.toArray(logs));
+        GSLogClientFactory.buildLogClient(GSLog.PERFORMANCE_LOG_STORE).sendLog(performanceLogs.toArray(logs));
     }
 
     private static GSLog parseLog(LogEntity logEntity) {
