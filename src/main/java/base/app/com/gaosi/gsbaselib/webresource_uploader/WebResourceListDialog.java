@@ -16,6 +16,9 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.avos.avoscloud.AVException;
+import com.avos.avoscloud.GetDataCallback;
+import com.avos.avoscloud.ProgressCallback;
 import com.lzy.okgo.model.Response;
 
 import java.io.BufferedOutputStream;
@@ -24,8 +27,11 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.util.Date;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
@@ -85,7 +91,13 @@ public class WebResourceListDialog extends Dialog {
                 final ProgressBar progressBar = findViewById(R.id.pb);
                 TextView tv_upload_time = view.findViewById(R.id.tv_upload_time);
                 final H5ResourceBean avObject = list.get(position);
-                String time = new Date(Long.valueOf(avObject.updatedAt)).toLocaleString();
+                String time;
+                if (isNumeric(avObject.updatedAt)) {
+                    time = new Date(Long.valueOf(avObject.updatedAt)).toLocaleString();//local server返回的是数字
+                } else {
+                    time = avObject.updatedAt;
+                }
+
                 tv_upload_time.setText(time);
                 final String name = avObject.name;
                 tv_name.setText(name);
@@ -94,100 +106,123 @@ public class WebResourceListDialog extends Dialog {
                     public void onClick(View v) {
                         //下载 并替换资源
                         String url = avObject.url;
-                        final String path = Environment.getExternalStorageDirectory() + "/" + name;
-//                        Request.getH5ResourceZipFile(url, new GetDataCallback() {
-//                            @Override
-//                            public void done(final byte[] bytes, AVException e) {
-//                                new Thread() {
-//                                    @Override
-//                                    public void run() {
-//                                        File zipFile = new File(path);
-//
-//                                        OutputStream output = null;
-//                                        try {
-//                                            output = new FileOutputStream(zipFile);
-//                                            BufferedOutputStream bufferedOutput = new BufferedOutputStream(output);
-//                                            bufferedOutput.write(bytes);
-//                                            unzip(zipFile.toString(), WebResourceUploader.filePath);
-//                                        } catch (FileNotFoundException e1) {
-//                                            e1.printStackTrace();
-//                                        } catch (IOException e1) {
-//                                            e1.printStackTrace();
-//                                        }
-//
-//                                        progressBar.post(new Runnable() {
-//                                            @Override
-//                                            public void run() {
-//                                                tvCopyProgress.setText("替换完成");
-//                                                progressBar.setVisibility(View.GONE);
-//                                            }
-//                                        });
-//                                    }
-//                                }.start();
-//
-//                            }
-//
-//                        }, new ProgressCallback() {
-//                            @Override
-//                            public void done(Integer integer) {
-//                                // 下载进度数据，integer 介于 0 和 100。
-//
-//
-//                                progressBar.setMax(100);
-//                                progressBar.setProgress(integer);
-//                                progressBar.setVisibility(View.VISIBLE);
-//
-//
-//                            }
-//                        });
+                        leanCloudRequest(url, name, progressBar);
 
 
-                        Request.getH5ResourceZipFile(url, name, new FileDownloadCallback() {
-                            @Override
-                            public void onDownloadProcess(float process) {
-                                progressBar.setMax(100);
-                                int integer = (int) (process * 100);
-                                progressBar.setProgress(integer);
-                                progressBar.setVisibility(View.VISIBLE);
-                            }
-
-                            @Override
-                            public void onResponseSuccess(Response<File> response, int code, final File file) {
-                                new Thread() {
-                                    @Override
-                                    public void run() {
-
-
-                                        try {
-                                            unzip(file.toString(), WebResourceUploader.filePath);
-                                        } catch (FileNotFoundException e1) {
-                                            e1.printStackTrace();
-                                        } catch (IOException e1) {
-                                            e1.printStackTrace();
-                                        }
-
-                                        progressBar.post(new Runnable() {
-                                            @Override
-                                            public void run() {
-                                                tvCopyProgress.setText("替换完成");
-                                                progressBar.setVisibility(View.GONE);
-                                            }
-                                        });
-                                    }
-                                }.start();
-                            }
-
-                            @Override
-                            public void onResponseError(Response<File> response, int code, String message) {
-                                Toast.makeText(c, message + ":" + response.getException().getCause(), Toast.LENGTH_LONG).show();
-                            }
-                        });
+                        //localRequest(url, name, progressBar, c);
                     }
                 });
                 return view;
             }
         });
 
+    }
+
+    /**
+     * 利用正则表达式判断字符串是否是数字
+     *
+     * @param str
+     * @return
+     */
+    public boolean isNumeric(String str) {
+        Pattern pattern = Pattern.compile("[0-9]*");
+        Matcher isNum = pattern.matcher(str);
+        if (!isNum.matches()) {
+            return false;
+        }
+        return true;
+    }
+
+    public void localRequest(String url, String name, final ProgressBar progressBar, final Context c) {
+        Request.getH5ResourceZipFile(url, name, new FileDownloadCallback() {
+            @Override
+            public void onDownloadProcess(float process) {
+                progressBar.setMax(100);
+                int integer = (int) (process * 100);
+                progressBar.setProgress(integer);
+                progressBar.setVisibility(View.VISIBLE);
+            }
+
+            @Override
+            public void onResponseSuccess(Response<File> response, int code, final File file) {
+                new Thread() {
+                    @Override
+                    public void run() {
+
+
+                        try {
+                            unzip(file.toString(), WebResourceUploader.filePath);
+                        } catch (FileNotFoundException e1) {
+                            e1.printStackTrace();
+                        } catch (IOException e1) {
+                            e1.printStackTrace();
+                        }
+
+                        progressBar.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                tvCopyProgress.setText("替换完成");
+                                progressBar.setVisibility(View.GONE);
+                            }
+                        });
+                    }
+                }.start();
+            }
+
+            @Override
+            public void onResponseError(Response<File> response, int code, String message) {
+                Toast.makeText(c, message + ":" + response.getException().getCause(), Toast.LENGTH_LONG).show();
+            }
+        });
+    }
+
+    public void leanCloudRequest(String url, String name, final ProgressBar progressBar) {
+        final String path = Environment.getExternalStorageDirectory() + "/" + name;
+        Request.getH5ResourceZipFile(url, new GetDataCallback() {
+            @Override
+            public void done(final byte[] bytes, AVException e) {
+                new Thread() {
+                    @Override
+                    public void run() {
+                        File zipFile = new File(path);
+
+                        OutputStream output = null;
+                        try {
+                            output = new FileOutputStream(zipFile);
+                            BufferedOutputStream bufferedOutput = new BufferedOutputStream(output);
+                            bufferedOutput.write(bytes);
+                            unzip(zipFile.toString(), WebResourceUploader.filePath);
+                        } catch (FileNotFoundException e1) {
+                            e1.printStackTrace();
+                        } catch (IOException e1) {
+                            e1.printStackTrace();
+                        }
+
+                        progressBar.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                tvCopyProgress.setText("替换完成");
+                                progressBar.setVisibility(View.GONE);
+                            }
+                        });
+                    }
+                }.start();
+
+            }
+
+        }, new ProgressCallback() {
+            @Override
+            public void done(Integer integer) {
+                // 下载进度数据，integer 介于 0 和 100。
+
+
+                progressBar.setMax(100);
+                progressBar.setProgress(integer);
+                progressBar.setVisibility(View.VISIBLE);
+
+
+            }
+        });
     }
 
     public WebResourceListDialog(@NonNull Context context, int themeResId, List<H5ResourceBean> list) {

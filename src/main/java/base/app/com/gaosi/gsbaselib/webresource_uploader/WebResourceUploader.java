@@ -53,6 +53,21 @@ public class WebResourceUploader {
     private static void showDialog(final Activity activity) {
 
 
+        //localRequest(activity);
+        leanCloudRequest(activity);
+    }
+
+    private static void leanCloudRequest(final Activity activity) {
+        Request.getH5ResourceList(new GSJsonCallback<List<H5ResourceBean>>() {
+            @Override
+            public void onSuccess(@NonNull List<H5ResourceBean> list) {
+                new WebResourceListDialog(activity, R.style.WinDialog, list).show();
+
+            }
+        });
+    }
+
+    private static void localRequest(final Activity activity) {
         String appType = "teacher";
         Request.getH5ResourceList(new GSJsonCallback<List<H5ResourceBean>>() {
             @Override
@@ -61,13 +76,6 @@ public class WebResourceUploader {
 
             }
         }, appType);
-//        Request.getH5ResourceList(new GSJsonCallback<List<H5ResourceBean>>() {
-//            @Override
-//            public void onSuccess(@NonNull List<H5ResourceBean> list) {
-//                new WebResourceListDialog(activity, R.style.WinDialog, list).show();
-//
-//            }
-//        });
     }
 
     public static void setLongClickTriggerView(View view, final Activity activity) {
