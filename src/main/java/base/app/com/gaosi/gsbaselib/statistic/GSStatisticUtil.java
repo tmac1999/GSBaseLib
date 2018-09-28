@@ -36,31 +36,22 @@ public class GSStatisticUtil {
     /**
      * must called in {@link Activity#onPause()} in order to record previous page id  fixme  如何配置注解让该方法如果在其他处调用自动报错？
      *
-     * @param clazz
-     * @param nativePageDictionary
+     * @param pageId
      */
-    public static void recordPreviousPageId(Class clazz, Map<String, String> nativePageDictionary) {
-        previousPageId = getCurrentPageId(clazz, nativePageDictionary);
+    public static void recordPreviousPageId(String pageId) {
+        previousPageId = pageId;
     }
-
     /**
      * 页面埋点
      */
-    public static void statisticCollect(Class clazz, Map<String, String> dic) {
+    public static void statisticCollect(String currentPageId) {
         String previousPageId = GSStatisticUtil.getPreviousPageId();
-        Log.i("collectPageLog", "pad = " + getCurrentPageId(clazz, dic));
+        Log.i("collectPageLog", "pad = " + currentPageId);
 
-        GSStatisticUtil.collectPageLog(getCurrentPageId(clazz, dic), previousPageId);
+        GSStatisticUtil.collectPageLog(currentPageId, previousPageId);
     }
 
-    public static String getCurrentPageId(Class clazz, Map<String, String> dic) {
-        String mPageId = "";
-        String key = clazz.getCanonicalName();
-        mPageId = dic.get(key);
 
-
-        return mPageId;
-    }
 
     static Pools.SimplePool<GSLog> mLogPool = new Pools.SimplePool<>(GSCollectLogUtil.MAX_LOG / 2 + 1);
 
