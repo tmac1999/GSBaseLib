@@ -1,6 +1,5 @@
 package base.app.com.gaosi.gsbaselib.statistic;
 
-import android.app.Activity;
 import android.app.Application;
 import android.os.Build;
 import android.support.v4.util.Pools;
@@ -12,6 +11,8 @@ import com.aliyun.sls.android.sdk.SLSDatabaseManager;
 import java.util.HashMap;
 import java.util.Map;
 
+import base.app.com.gaosi.gsbaselib.utils.log.networklog.LogUtil;
+
 /**
  * 埋点管理
  * Created by pingfu on 2018/2/2.
@@ -22,40 +23,48 @@ public class GSStatisticUtil {
     public static String previousPageId;
 
 
-    /**
-     * 此界面用来处理页面间的跳转路径
-     *
-     * @return 上一个页面的埋点信息
-     */
-    public static String getPreviousPageId() {
-        String temp = previousPageId;
-        previousPageId = null;
-        return temp;
-    }
+//    /**
+//     * 此界面用来处理页面间的跳转路径
+//     *
+//     * @return 上一个页面的埋点信息
+//     */
+//    public static String getPreviousPageId() {
+//        String temp = previousPageId;
+//        previousPageId = null;
+//        return temp;
+//    }
 
-    /**
-     * must called in {@link Activity#onPause()} in order to record previous page id  fixme  如何配置注解让该方法如果在其他处调用自动报错？
-     *
-     * @param pageId
-     */
-    public static void recordPreviousPageId(String pageId) {
-        previousPageId = pageId;
-    }
+    //    /**
+//     * must called in {@link Activity#onPause()} in order to record previous page id  fixme  如何配置注解让该方法如果在其他处调用自动报错？
+//     *
+//     * @param pageId
+//     */
+//    public static void recordPreviousPageId(String pageId) {
+//        previousPageId = pageId;
+//    }
+
+
     /**
      * 页面埋点
      */
     public static void statisticCollect(String currentPageId) {
-        String previousPageId = GSStatisticUtil.getPreviousPageId();
+        // String previousPageId = GSStatisticUtil.getPreviousPageId();
         Log.i("collectPageLog", "pad = " + currentPageId);
 
-        GSStatisticUtil.collectPageLog(currentPageId, previousPageId);
-    }
+        if (TextUtils.equals(currentPageId, previousPageId)) {
+            LogUtil.i("collectPageLog===相同页面埋点，是否埋点方法执行了两次？");
+            return;
+        }
 
+
+        GSStatisticUtil.collectPageLog(currentPageId, previousPageId);
+        previousPageId = currentPageId;
+    }
 
 
     static Pools.SimplePool<GSLog> mLogPool = new Pools.SimplePool<>(GSCollectLogUtil.MAX_LOG / 2 + 1);
 
-    public static void initLog(Application application, StatisticInfoBean statisticInfoBean,String accessKeyId,String secretKeyId) {
+    public static void initLog(Application application, StatisticInfoBean statisticInfoBean, String accessKeyId, String secretKeyId) {
         SLSDatabaseManager.getInstance().setupDB(application);
         postOldLogs();
         GSStatisticUtil.statisticInfoBean = statisticInfoBean;
@@ -109,10 +118,11 @@ public class GSStatisticUtil {
         collectLog(createGSLog(GSLog.PAGE_LOG_STORE, params));
     }
 
-    public static void collectPageLog(String pad, String rPad) {
+    private static void collectPageLog(String pad, String rPad) {
         Map<String, String> params = new HashMap<>();
         params.put("pad", pad);
         params.put("rpad", rPad);
+        Log.i("collectPageLog_rpad", "pad = " + pad + "    previousPad=" + rPad);
         collectLog(createGSLog(GSLog.PAGE_LOG_STORE, params));
     }
 
