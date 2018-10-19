@@ -68,6 +68,13 @@ public class WebResourceListDialog extends Dialog {
                 Toast.makeText(c, "删除成功", Toast.LENGTH_SHORT).show();
             }
         });
+        findViewById(R.id.btn_closed).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dismiss();
+            }
+        });
+        setCanceledOnTouchOutside(true);
         lvWebResourceList.setAdapter(new BaseAdapter() {
             @Override
             public int getCount() {

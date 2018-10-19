@@ -24,13 +24,24 @@
             android:text="正在拷贝:asd.js"
             android:visibility="gone"
             tools:visibility="visible" />
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_weight="1" />
+
+        <Button
+            android:id="@+id/btn_closed"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="关闭" />
     </LinearLayout>
 
     <ListView
         android:id="@+id/lv_web_resource_list"
-        android:layout_marginBottom="10dp"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        android:layout_marginBottom="10dp" />
 
     <ProgressBar
         android:id="@+id/pb"
