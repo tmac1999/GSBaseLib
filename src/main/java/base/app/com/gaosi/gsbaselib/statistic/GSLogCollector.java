@@ -14,7 +14,7 @@ import java.util.concurrent.Executors;
  * <p/>
  * Created by pingfu on 2018/2/2.
  */
-class GSCollectLogUtil {
+class GSLogCollector {
     /**
      * 每个文件最多存储10个log
      * 阿里云使用数据库缓存log，每次取数据的数量是30条，所以超过30条可以批量发送日志
@@ -33,7 +33,7 @@ class GSCollectLogUtil {
      *
      * @param log 需要添加的Log
      */
-    public synchronized static void addLog(GSLog log, LogOptions options) {
+    synchronized static void addLog(GSLog log, LogOptions options) {
         if (log == null) {
             return;
         }
@@ -42,7 +42,7 @@ class GSCollectLogUtil {
             postLog(log);
         } else {
             SLSDatabaseManager.getInstance().insertRecordIntoDB(createLogEntry(log));
-            mLogNum ++;
+            mLogNum++;
             if (mLogNum >= MAX_LOG) {
                 postLogs();
             }
@@ -90,7 +90,7 @@ class GSCollectLogUtil {
                 while (logEntities != null && logEntities.size() > 0 && i < 3) {
                     postLogEntities(logEntities);
                     logEntities = SLSDatabaseManager.getInstance().queryRecordFromDB();
-                    i ++;
+                    i++;
                 }
                 SLSDatabaseManager.getInstance().deleteTwoThousandRecords();
             }

@@ -22,28 +22,6 @@ public class GSStatisticUtil {
     //页面跳转临时变量，在页面
     public static String previousPageId;
 
-
-//    /**
-//     * 此界面用来处理页面间的跳转路径
-//     *
-//     * @return 上一个页面的埋点信息
-//     */
-//    public static String getPreviousPageId() {
-//        String temp = previousPageId;
-//        previousPageId = null;
-//        return temp;
-//    }
-
-    //    /**
-//     * must called in {@link Activity#onPause()} in order to record previous page id  fixme  如何配置注解让该方法如果在其他处调用自动报错？
-//     *
-//     * @param pageId
-//     */
-//    public static void recordPreviousPageId(String pageId) {
-//        previousPageId = pageId;
-//    }
-
-
     /**
      * 页面埋点
      */
@@ -62,7 +40,7 @@ public class GSStatisticUtil {
     }
 
 
-    static Pools.SimplePool<GSLog> mLogPool = new Pools.SimplePool<>(GSCollectLogUtil.MAX_LOG / 2 + 1);
+    static Pools.SimplePool<GSLog> mLogPool = new Pools.SimplePool<>(GSLogCollector.MAX_LOG / 2 + 1);
 
     public static void initLog(Application application, StatisticInfoBean statisticInfoBean, String accessKeyId, String secretKeyId) {
         SLSDatabaseManager.getInstance().setupDB(application);
@@ -82,7 +60,7 @@ public class GSStatisticUtil {
      * @param log 日志信息
      */
     public static void collectLog(GSLog log) {
-        GSCollectLogUtil.addLog(log, LogOptions.AT_ONCE);
+        GSLogCollector.addLog(log, LogOptions.AT_ONCE);
     }
 
     /**
@@ -97,7 +75,7 @@ public class GSStatisticUtil {
 
         GSLog log = createGSLog(GSLog.PAGE_LOG_STORE, params);
         if (log != null) {
-            GSCollectLogUtil.addLog(log, null);
+            GSLogCollector.addLog(log, null);
         }
     }
 
@@ -105,7 +83,7 @@ public class GSStatisticUtil {
      * 提交历史log
      */
     public static void postOldLogs() {
-        GSCollectLogUtil.postOldLogs();
+        GSLogCollector.postOldLogs();
     }
 
     public static void collectClickLog(String pad, String clickKey, String value) {
