@@ -90,9 +90,8 @@ public class GSStatisticUtil {
         Map<String, String> params = new HashMap<>();
         params.put("evt", "clk");
         params.put("aad", clickKey);
-        params.put("value", value);
+        params.put("introduction", value);
         params.put("pad", pad);
-
         collectLog(createGSLog(GSLog.PAGE_LOG_STORE, params));
     }
 
