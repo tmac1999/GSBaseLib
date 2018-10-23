@@ -6,8 +6,6 @@ import android.support.v4.util.Pools;
 import android.text.TextUtils;
 import android.util.Log;
 
-import com.aliyun.sls.android.sdk.SLSDatabaseManager;
-
 import java.util.HashMap;
 import java.util.Map;
 
@@ -43,7 +41,7 @@ public class GSStatisticUtil {
     static Pools.SimplePool<GSLog> mLogPool = new Pools.SimplePool<>(GSLogCollector.MAX_LOG / 2 + 1);
 
     public static void initLog(Application application, StatisticInfoBean statisticInfoBean, String accessKeyId, String secretKeyId) {
-        SLSDatabaseManager.getInstance().setupDB(application);
+//        SLSDatabaseManager.getInstance().setupDB(application);
         postOldLogs();
         GSStatisticUtil.statisticInfoBean = statisticInfoBean;
         GSStatisticUtil.application = application;
