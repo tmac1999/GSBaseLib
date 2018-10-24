@@ -42,7 +42,7 @@ public class GSStatisticUtil {
 
     public static void initLog(Application application, StatisticInfoBean statisticInfoBean, String accessKeyId, String secretKeyId) {
 //        SLSDatabaseManager.getInstance().setupDB(application);
-        postOldLogs();
+       // postOldLogs();
         GSStatisticUtil.statisticInfoBean = statisticInfoBean;
         GSStatisticUtil.application = application;
         GSLogClientFactory.accessKeyId = accessKeyId;
